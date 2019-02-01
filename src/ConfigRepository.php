@@ -2,7 +2,9 @@
 
 namespace Coalition;
 
-class ConfigRepository
+use \ArrayAccess;
+
+class ConfigRepository implements ArrayAccess
 {
     /**
      * ConfigRepository Constructor
@@ -109,4 +111,27 @@ class ConfigRepository
             $this->set(pathinfo($files)['filename'],$loaded_array_from_file);
         }
      }
+
+
+     
+    /* ---------------------------------------------------- */
+    /* ---- ArrayAccess (abstract public methods) --------- */
+    /* ---------------------------------------------------- */    
+    public function offsetSet($offset, $value) {
+        if (is_null($offset)) {
+            $this->config_array[] = $value;
+        } else {
+            $this->config_array[$offset] = $value;
+        }
+    }
+    public function offsetExists($offset) {
+        return isset($this->config_array[$offset]);
+    }
+    public function offsetUnset($offset) {
+        unset($this->config_array[$offset]);
+    }
+    public function offsetGet($offset) {
+        return isset($this->config_array[$offset]) 
+                        ? $this->config_array[$offset] : null;
+    }   
 }
